@@ -2,3 +2,7 @@
 target/
 dbt_packages/
 logs/
+
+# Fichiers CSV volumineux
+all_works_of_art_le_louvre_uncleaned.csv
+all_works_of_art_le_louvre_merged.csv

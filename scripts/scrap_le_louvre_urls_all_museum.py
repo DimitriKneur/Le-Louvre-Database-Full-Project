@@ -22,7 +22,7 @@ class LouvreSpider(scrapy.Spider):
                 }
         
         # Extracting the total number of pages
-        total_pages = '500' #response.xpath('/html/body/div[1]/main/section/div[2]/div[2]/div[2]/nav/form/span[2]/text()').get()
+        total_pages = response.xpath('/html/body/div[1]/main/section/div[2]/div[2]/div[2]/nav/form/span[2]/text()').get()
         if total_pages:
             total_pages = int(total_pages.split()[-1])  # Extracting the last number from the text
         else:

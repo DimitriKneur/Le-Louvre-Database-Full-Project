@@ -121,10 +121,10 @@ def create_table_if_not_exists(engine, df):
     """Crée la table si elle n'existe pas"""
     logger.info(f"Vérification/création de la table: {TABLE_NAME}")
     
-    # Générer la définition de la table (toutes les colonnes en VARCHAR)
+    # Générer la définition de la table (toutes les colonnes en TEXT)
     columns_def = []
     for col in df.columns:
-        columns_def.append(f'"{col}" VARCHAR')
+        columns_def.append(f'"{col}" TEXT')  # TEXT au lieu de VARCHAR
     
     create_table_sql = f"""
     CREATE TABLE IF NOT EXISTS {DB_CONFIG['schema']}.{TABLE_NAME} (
