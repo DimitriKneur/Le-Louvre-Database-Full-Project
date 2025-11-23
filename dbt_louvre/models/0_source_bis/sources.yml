@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: source
+    description: "Raw tables in Supabase source schema"
+    schema: source_raw
+    tables:
+      - name: all_works_of_art_le_louvre_raw
+        description: "Raw data from Le Louvre collection scraping - all columns as VARCHAR"
+        columns:
+          - name: arkid
+            description: Primary key 
+          # Note: Add specific column documentation here after first load
+          # All columns are currently VARCHAR type
