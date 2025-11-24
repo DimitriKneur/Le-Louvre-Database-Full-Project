@@ -147,6 +147,115 @@ def merge_all_batches():
     
     return df_cleaned
 
+def filter_dataframe(df):
+    """Filtre les données selon les critères métier"""
+    logger.info("\n--- FILTRAGE DES DONNÉES ---")
+    initial_rows = len(df)
+    
+    has_title = 'title' in df.columns
+    has_current_location = 'currentLocation' in df.columns
+    
+    logger.info(f"Colonnes disponibles pour filtrage:")
+    logger.info(f"  - title: {has_title}")
+    logger.info(f"  - currentLocation: {has_current_location}")
+    
+    if has_title and has_current_location:
+        mask = (
+            df['title'].notna() & 
+            (df['currentLocation'] != 'non exposé')
+        )
+        logger.info("📊 Filtre: titre présent ET œuvre exposée")
+    elif has_title:
+        mask = df['title'].notna()
+        logger.info("📊 Filtre: titre présent uniquement")
+    elif has_current_location:
+        mask = df['currentLocation'] != 'non exposé'
+        logger.info("📊 Filtre: œuvre exposée uniquement")
+    else:
+        logger.warning("⚠ Aucune colonne de filtrage trouvée")
+        mask = pd.Series([True] * len(df), index=df.index)
+    
+    df_filtered = df[mask].copy()
+    
+    rows_removed = initial_rows - len(df_filtered)
+    logger.info(f"Lignes initiales: {initial_rows:,}")
+    logger.info(f"Lignes conservées: {len(df_filtered):,}")
+    logger.info(f"Lignes supprimées: {rows_removed:,} ({rows_removed/initial_rows*100:.1f}%)")
+    
+    return df_filtered
+
+
+def drop_unnecessary_columns(df):
+    """Supprime les colonnes non nécessaires"""
+    logger.info("\n--- SUPPRESSION DES COLONNES INUTILES ---")
+    
+    columns_to_drop = [
+        'index.Original artwork',
+        'titleComplement',
+        'index.Imagery',
+        'index.Language',
+        'objectNumber',
+        'printsDrawingsEntity',
+        'printsDrawingsCollection',
+        'index.Names and titles',
+        'index.Script',
+        'index.Nature of text',
+        'jabachInventory',
+        'historicalContext',
+        'provenance',
+        'shape',
+        'onomastics',
+        'namesAndTitles',
+        'printState',
+        'originalObject',
+        'index',
+        'index.Description/Features',
+        'index.objectType',
+        'napoleonInventory',
+        'bibliography',
+        'exhibition',
+        'relatedWork',
+        'objectType',
+        'relatedWork',
+        'inscriptions',
+        'index.Places',
+        'index.Subjects',
+        'index.collection',
+        'index.People',
+        'longTermLoanTo',
+        'index.Name',
+        'placeOfCreation',
+        'dateOfDiscovery',
+        'placeOfDiscovery',
+        'materialsAndTechniques',
+        'index.Materials',
+        "index.Mode d'acquisition",
+        'modified ',
+        'denominationTitle',
+        'previousOwner',
+        'ownedBy',
+        'heldBy',
+        'objectHistory',
+        'dimension',
+        'isMuseesNationauxRecuperation'
+    ]
+    
+    existing_cols_to_drop = [col for col in columns_to_drop if col in df.columns]
+    missing_cols = [col for col in columns_to_drop if col not in df.columns]
+    
+    if missing_cols:
+        logger.warning(f"⚠ Colonnes introuvables: {', '.join(missing_cols)}")
+    
+    if existing_cols_to_drop:
+        initial_cols = len(df.columns)
+        df = df.drop(columns=existing_cols_to_drop)
+        logger.info(f"✓ {len(existing_cols_to_drop)} colonnes supprimées")
+        logger.info(f"📊 Colonnes: {initial_cols} → {len(df.columns)}")
+    else:
+        logger.info("ℹ Aucune colonne à supprimer")
+    
+    return df
+
 def save_merged_data(df):
     """Sauvegarde le DataFrame mergé"""
     
@@ -187,6 +296,13 @@ def main():
     df_merged = merge_all_batches()
     
     if df_merged is not None:
+
+        # Filtrer les données
+        df_merged = filter_dataframe(df_merged)
+        
+        # Supprimer les colonnes inutiles
+        df_merged = drop_unnecessary_columns(df_merged)
+
         # Sauvegarder
         output_file = save_merged_data(df_merged)
         
