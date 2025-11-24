@@ -237,7 +237,12 @@ def drop_unnecessary_columns(df):
         'heldBy',
         'objectHistory',
         'dimension',
-        'isMuseesNationauxRecuperation'
+        'isMuseesNationauxRecuperation',
+        'displayDateCreated',
+        'currentLocation',
+        'room',
+        'index.technic',
+        'index.Period'
     ]
     
     existing_cols_to_drop = [col for col in columns_to_drop if col in df.columns]

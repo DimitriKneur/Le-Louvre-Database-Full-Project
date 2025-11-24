@@ -6,7 +6,7 @@ from scrapy.crawler import CrawlerProcess
 class LouvreSpider(scrapy.Spider):
     name = "louvre"
     start_urls = [
-        'https://collections.louvre.fr/en/recherche',
+        'https://collections.louvre.fr/recherche?location%5B0%5D=141080&location%5B1%5D=190540&location%5B2%5D=147894&location%5B3%5D=234132&location%5B4%5D=124117',
     ]
 
     def parse(self, response):
